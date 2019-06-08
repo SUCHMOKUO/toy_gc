@@ -1,11 +1,13 @@
+CC = clang
+
 output: vm.o main.o
-	clang vm.o main.o -o main
+	$(CC) vm.o main.o -o main
 
 main.o: main.c
-	clang -c main.c
+	$(CC) -c main.c
 
 vm.o: vm.c
-	clang -c vm.c
+	$(CC) -c vm.c
 
 clean:
 	rm *.o
