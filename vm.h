@@ -32,12 +32,11 @@ typedef struct {
   } mem;  // 分配的内存，以链表形式保存
 } VM;
 
-static Object* vm_alloc();
+static Object* vm_alloc(VM* vm);
 static void vm_free(Object* o);
 static void push(VM* vm, Object* o);
 static Object* pop(VM* vm);
 static int stack_size(VM* vm);
-static void add_data(VM* vm, Object* o);
 static void mark(Object* o);
 static void mark_all(VM* vm);
 static void sweep(VM* vm);
