@@ -7,9 +7,7 @@
 VM* new_vm() {
   VM* vm = (VM*) malloc(sizeof(VM));
   vm->sp = vm->stack;
-  vm->mem.size = 0;
-  vm->mem.head = NULL;
-  vm->mem.tail = NULL;
+  vm->mem = NULL;
   return vm;
 }
 
@@ -48,13 +46,14 @@ void gc(VM* vm) {
 
 static Object* vm_alloc(VM* vm) {
   Object* o = (Object*) malloc(sizeof(Object));
-  if (vm->mem.size == 0) {  
-    vm->mem.head = vm->mem.tail = o;
+  o->marked = false;
+  if (vm->mem == NULL) {
+    o->next = NULL;
+    vm->mem = o;
   } else {
-    vm->mem.tail->next = o;
-    vm->mem.tail = o;
+    o->next = vm->mem;
+    vm->mem = o;
   }
-  vm->mem.size++;
   printf("create object: %p\n", o);
   return o;
 }
@@ -116,11 +115,10 @@ static void mark_all(VM* vm) {
 }
 
 static void sweep(VM* vm) {
-  int data_len = vm->mem.size;
   Object* prev = NULL;
-  Object* cur = vm->mem.head;
+  Object* cur = vm->mem;
   Object* free_target = NULL;
-  while (data_len-- > 0) {
+  while (cur != NULL) {
     if (cur->marked) {
       cur->marked = false;
       prev = cur;
@@ -132,9 +130,8 @@ static void sweep(VM* vm) {
     if (prev != NULL) {
       prev->next = free_target->next;
     } else {
-      vm->mem.head = free_target->next;
+      vm->mem = free_target->next;
     }
-    vm->mem.size--;
     vm_free(free_target);
   }
 }

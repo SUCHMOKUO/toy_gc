@@ -24,12 +24,7 @@ typedef struct _Object {
 typedef struct {
   Object* stack[STACK_SIZE];
   Object** sp;  // 栈顶指针
-  
-  struct {
-    Object* head;
-    Object* tail;
-    int size;
-  } mem;  // 分配的内存，以链表形式保存
+  Object* mem;  // 分配的内存，以链表形式保存
 } VM;
 
 static Object* vm_alloc(VM* vm);
